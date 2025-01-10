@@ -164,6 +164,10 @@ typedef struct image_info_s {
 #define SD_EJECT_GPIO_Port GPIOB
 #define DEBUG_Pin GPIO_PIN_10
 #define DEBUG_GPIO_Port GPIOA
+#define _3_5DSK_Pin GPIO_PIN_11
+#define _3_5DSK_GPIO_Port GPIOA
+#define SELECT_Pin GPIO_PIN_8
+#define SELECT_GPIO_Port GPIOB
 #define WR_REQ_Pin GPIO_PIN_9
 #define WR_REQ_GPIO_Port GPIOB
 #define WR_REQ_EXTI_IRQn EXTI9_5_IRQn

@@ -944,7 +944,8 @@ enum STATUS unlinkImageFile(char* fullpathfilename){
   * @brief  The application entry point.
   * @retval int
   */
-int main(void){
+int main(void)
+{
 
   /* USER CODE BEGIN 1 */
 
@@ -1240,17 +1241,9 @@ static void MX_NVIC_Init(void)
   /* EXTI4_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(EXTI4_IRQn, 2, 0);
   HAL_NVIC_EnableIRQ(EXTI4_IRQn);
-  
-  /* TIM2_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(TIM2_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(TIM2_IRQn);
   /* TIM3_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(TIM3_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(TIM3_IRQn);
-  /* TIM4_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(TIM4_IRQn, 10, 0);
-  HAL_NVIC_EnableIRQ(TIM4_IRQn);
-
   /* SDIO_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(SDIO_IRQn, 6, 0);
   HAL_NVIC_EnableIRQ(SDIO_IRQn);
@@ -1260,14 +1253,16 @@ static void MX_NVIC_Init(void)
   /* DMA2_Stream6_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA2_Stream6_IRQn, 6, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream6_IRQn);
- 
   /* EXTI9_5_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);     // change from 4 to 0
   HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
   /* EXTI15_10_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(EXTI15_10_IRQn, 13, 0);
   HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
-} 
+  /* TIM2_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(TIM2_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(TIM2_IRQn);
+}
 
 /**
   * @brief I2C1 Initialization Function
@@ -1518,7 +1513,7 @@ static void MX_TIM3_Init(void)
     Error_Handler();
   }
   sConfigOC.OCMode = TIM_OCMODE_TIMING;
-  sConfigOC.Pulse =140;
+  sConfigOC.Pulse = 132;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   if (HAL_TIM_OC_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
@@ -1527,7 +1522,7 @@ static void MX_TIM3_Init(void)
   }
   __HAL_TIM_ENABLE_OCxPRELOAD(&htim3, TIM_CHANNEL_1);
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 140;
+  sConfigOC.Pulse = 120;
   if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_4) != HAL_OK)
   {
     Error_Handler();
@@ -1607,7 +1602,7 @@ static void MX_USART1_UART_Init(void)
 
   /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
-  huart1.Init.BaudRate = 230400;
+  huart1.Init.BaudRate = 115200;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;
@@ -1661,6 +1656,9 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, RD_DATA_Pin|WR_PROTECT_Pin, GPIO_PIN_RESET);
 
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(DEBUG_GPIO_Port, DEBUG_Pin, GPIO_PIN_RESET);
+
   /*Configure GPIO pins : BTN_DOWN_Pin BTN_UP_Pin BTN_ENTR_Pin */
   GPIO_InitStruct.Pin = BTN_DOWN_Pin|BTN_UP_Pin|BTN_ENTR_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
@@ -1679,11 +1677,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(DEVICE_ENABLE_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : WR_DATA_Pin */
-  GPIO_InitStruct.Pin = WR_DATA_Pin;
+  /*Configure GPIO pins : WR_DATA_Pin _3_5DSK_Pin */
+  GPIO_InitStruct.Pin = WR_DATA_Pin|_3_5DSK_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-  HAL_GPIO_Init(WR_DATA_GPIO_Port, &GPIO_InitStruct);
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pin : RD_DATA_Pin */
   GPIO_InitStruct.Pin = RD_DATA_Pin;
@@ -1691,13 +1689,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(RD_DATA_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : DEBUG_Pin */
-  GPIO_InitStruct.Pin = DEBUG_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  HAL_GPIO_Init(DEBUG_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : WR_PROTECT_Pin */
   GPIO_InitStruct.Pin = WR_PROTECT_Pin;
@@ -1717,6 +1708,19 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(SD_EJECT_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : DEBUG_Pin */
+  GPIO_InitStruct.Pin = DEBUG_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  HAL_GPIO_Init(DEBUG_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : SELECT_Pin */
+  GPIO_InitStruct.Pin = SELECT_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(SELECT_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : WR_REQ_Pin */
   GPIO_InitStruct.Pin = WR_REQ_Pin;
